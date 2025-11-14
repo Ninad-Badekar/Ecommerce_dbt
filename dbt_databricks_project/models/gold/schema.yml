@@ -1,0 +1,59 @@
+version: 2
+
+models:
+
+  - name: dim_customers
+    description: "Customer dimension table with surrogate keys."
+    columns:
+      - name: customer_key
+        description: "Surrogate primary key."
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: "Business customer id."
+        data_tests:
+          - not_null
+
+  - name: dim_products
+    description: "Product dimension with surrogate PKs."
+    columns:
+      - name: product_key
+        description: "Surrogate primary key."
+        data_tests:
+          - not_null
+          - unique
+
+      - name: product_id
+        description: "Business product id."
+        data_tests:
+          - not_null
+
+  - name: fact_orders
+    description: "Fact table with one row per order line."
+    columns:
+      - name: fact_order_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_key
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_key
+
+      - name: product_key
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: product_key
+
+      - name: total_amount
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "total_amount >= 0"

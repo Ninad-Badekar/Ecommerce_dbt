@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: workspace
+    schema: dbt_project
+    tables:
+      - name: orders
+        columns:
+          - name: order_id
+            tests:
+              - not_null
